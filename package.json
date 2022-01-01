@@ -1,0 +1,25 @@
+{
+  "name": "gitpod",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.1",
+    "chalk": "^5.0.0",
+    "commander": "^8.3.0",
+    "dotenv": "^10.0.0",
+    "inquirer": "^8.2.0",
+    "octokit": "^1.7.1",
+    "uuid": "^8.3.2"
+  },
+  "bin": {
+    
+  }
+}
