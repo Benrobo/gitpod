@@ -139,6 +139,7 @@ class GitPod {
 
     // const PAT = await this.askToken();
     const configToken = configstore.get();
+
     const checkPAT =
       configToken.token === "" || !configToken.token
         ? await this.askToken()
@@ -205,7 +206,7 @@ class GitPod {
       );
     } catch (e) {
       errorCount += 1;
-      if (errorCount > 1) {
+      if (errorCount >= 1) {
         // this would clear the default user token from pc and then ask the user for a new one
         configstore.clear();
       }

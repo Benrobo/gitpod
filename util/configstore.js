@@ -27,13 +27,13 @@ module.exports = class ConfigStore {
     // check if folder exisi
     if (fs.existsSync(dir) === false) {
       fs.mkdirSync(dir);
+
+      const gitpodjson = {
+        token: "",
+      };
+
+      fs.writeFileSync(gitpodFileJson, JSON.stringify(gitpodjson));
     }
-
-    const gitpodjson = {
-      token: "",
-    };
-
-    fs.writeFileSync(gitpodFileJson, JSON.stringify(gitpodjson));
   }
 
   get() {
