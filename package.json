@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./gitpod.js"
+    "start": "node ./app.js"
   },
   "keywords": [
     "cli",

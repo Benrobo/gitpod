@@ -18,7 +18,7 @@ log(gitpod.ANCII("gitpod"));
 
 program
   .option("-v, --version", "extra information for gitpod")
-  .option("-l, --login", "log in into gitpod using github acct")
+  // .option("-l, --login", "log in into gitpod using github acct")
   .option("-i, --init", "initialize gitpod")
   .parse(process.argv);
 
@@ -33,5 +33,12 @@ if (opt.v || opt.version) {
   }
   run();
 } else {
-  chalk.red("command is invalid");
+  log("");
+  log(chalk.red("command is invalid"));
+  log("");
+  program.options.forEach(option => {
+    log(option.flags) 
+    log(option.description)
+    log("")
+  });
 }

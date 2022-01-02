@@ -1,4 +1,3 @@
-require("dotenv").config();
 const inquirer = require("inquirer");
 const chalk = require("chalk");
 const figlet = require("figlet");
@@ -10,7 +9,7 @@ const ConfigStore = require("./util/configstore");
 const { Octokit } = require("@octokit/rest");
 
 // directory
-const pdir = path.join(__dirname);
+const home = process.cwd();
 
 // chalk utilities
 const error = chalk.red;
@@ -153,7 +152,7 @@ class GitPod {
     // store token in gitpod.json file in os home directory
     configstore.set(checkPAT.token);
 
-    const dir = path.join(__dirname, app_name);
+    const dir = path.join(home, app_name);
 
     try {
       const githubData = {
@@ -210,12 +209,7 @@ class GitPod {
         // this would clear the default user token from pc and then ask the user for a new one
         configstore.clear();
       }
-      return this.log(
-        error(
-          "Something went wrong creating remote repo",
-          e.response.data.errors[0].message
-        )
-      );
+      return this.log(error("Something went wrong creating remote repo", e));
     }
   }
 }

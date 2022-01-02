@@ -18,12 +18,6 @@ const success = chalk.bold.green;
 
 const home = os.userInfo().homedir;
 
-const osdir = {
-  Linux: home,
-  Darwin: home,
-  Windows_NT: home,
-};
-
 const dir = path.join(home, "/gitpod");
 const gitpodFileJson = `${dir}/gitpod.json`;
 
@@ -33,16 +27,13 @@ module.exports = class ConfigStore {
     // check if folder exisi
     if (fs.existsSync(dir) === false) {
       fs.mkdirSync(dir);
-      // create a json file
-
-      const gitpodjson = {
-        token: "",
-      };
-
-      fs.writeFileSync(gitpodFileJson, JSON.stringify(gitpodjson));
-
-      console.log("file created");
     }
+
+    const gitpodjson = {
+      token: "",
+    };
+
+    fs.writeFileSync(gitpodFileJson, JSON.stringify(gitpodjson));
   }
 
   get() {
