@@ -21,10 +21,7 @@
     "body-parser": "^1.19.1",
     "chalk": "^5.0.0",
     "commander": "^8.3.0",
-    "dotenv": "^10.0.0",
-    "inquirer": "^8.2.0",
-    "octokit": "^1.7.1",
-    "uuid": "^8.3.2"
+    "inquirer": "^8.2.0"
   },
   "bin": {
     "gitpod": "./app.js"
