@@ -1,6 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 const os = require("os");
+const chalk = require("chalk");
+
 
 /** Tip: on macOS, you’ll find the file in 
  * mac
@@ -10,6 +12,11 @@ const os = require("os");
     win
     C:\Users\[username] 
 **/
+
+
+// chalk utilities
+const error = chalk.bold.red;
+const success = chalk.bold.green;
 
 const home = os.userInfo().homedir;
 
@@ -31,7 +38,6 @@ module.exports = class ConfigStore {
       // create a json file
 
       const gitpodjson = {
-        project_name: this.package_name,
         token: "",
       };
 
@@ -49,38 +55,28 @@ module.exports = class ConfigStore {
       return res;
     }
 
-    throw Error(
-      "Error occured getting config content, pls restart and try again"
-    );
+    console.log(error(
+        "Error occured getting config content, pls restart and try again"
+      ));
   }
 
-  set(packageName, gtoken) {
-    if (
-      !packageName ||
-      packageName === "" ||
-      packageName === undefined ||
-      gtoken === "" ||
-      gtoken === undefined ||
-      !gtoken
-    ) {
-      throw Error(
-        "expected valid parameters (package_name, token) but got none"
-      );
+  set(gtoken) {
+    if (gtoken === "" || gtoken === undefined || !gtoken) {
+      console.log(error("expected valid parameters (token) but got none"));
     }
 
-    let { project_name, token } = this.get();
+    let { token } = this.get();
 
-    if (packageName === project_name) {
+    if (token === gtoken) {
       let newData = {
-        ...this.get(),
         token: gtoken,
       };
 
       fs.writeFileSync(gitpodFileJson, JSON.stringify(newData));
 
-      return console.log("config updated");
+      return console.log(error("config updated"))
     }
 
-    throw Error("package name is invalid");
+    error("package name is invalid");
   }
 };

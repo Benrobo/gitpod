@@ -18,14 +18,6 @@ const pdir = path.join(__dirname);
 const error = chalk.bold.red;
 const success = chalk.bold.green;
 
-// Create a Configstore instance.
-const packageName = require("./package.json").name;
-
-const configstore = new ConfigStore(packageName);
-
-// initialize octokit
-const githubAuth = new Octokit();
-
 class GitPod {
   genid() {
     return uuid().replace("-", "").slice(0, 10);
@@ -100,6 +92,25 @@ class GitPod {
     return inquirer.prompt(questions);
   }
 
+  async askToken() {
+    const questions = [
+      {
+        name: "token", // personal access token
+        type: "input",
+        message: success("Your github personal access token: "),
+        validate: function (value) {
+          if (value.length) {
+            return true;
+          } else {
+            return error("personal access token cant be empty");
+          }
+        },
+      },
+    ];
+
+    return inquirer.prompt(questions);
+  }
+
   // initquestions
   async initQuestions() {
     const questions = [
@@ -116,18 +127,6 @@ class GitPod {
         },
       },
       {
-        name: "PAT", // personal access token
-        type: "input",
-        message: success("Your github personal access token: "),
-        validate: function (value) {
-          if (value.length) {
-            return true;
-          } else {
-            return error("personal access token cant be empty");
-          }
-        },
-      },
-      {
         type: "input",
         name: "description",
         message: success("Description: "),
@@ -135,7 +134,7 @@ class GitPod {
           if (value.length) {
             return true;
           } else {
-            return error("personal access token cant be empty");
+            return error("description cant be empty");
           }
         },
       },
@@ -144,7 +143,7 @@ class GitPod {
         name: "visibility",
         choices: ["public", "private"],
         default: "public",
-        message: success("Private or Public"),
+        message: success("Public or Private"),
       },
     ];
 
@@ -153,25 +152,39 @@ class GitPod {
 
   // init
   async initGitpod() {
-    // create an empty working folder
-    let { app_name, PAT, visibility, description } = await this.initQuestions();
+    const { app_name, visibility, description } = await this.initQuestions();
+
+    // check if token is present in users home directory
+    //  if it is, just give the user from there else
+    // ask for PAT
+
+    // Create a Configstore instance.
+    const configstore = new ConfigStore(app_name);
+
+    const PAT = await this.askToken();
+    const configToken = configstore.get();
+    const checkPAT =
+      configToken.token === "" || !configToken.token ? PAT : configToken;
+
+    // init octokit/rest auth
+    const githubAuth = new Octokit({
+      auth: checkPAT.token,
+    });
+
     // store token in gitpod.json file in os home directory
-    configstore.set(packageName, PAT);
+    configstore.set(checkPAT.token);
+
+    console.log(checkPAT.token);
+
     const dir = path.join(__dirname, app_name);
+
     try {
-      // check if dir exist
       if (fs.existsSync(dir) === false) {
-        // create a .gitignore file
-        const ignore = `
-          /node_modules
-        `;
-        fs.writeFileSync(`${dir}/.gitignore`, ignore);
+        const ignore = `/node_modules` + "\n";
         fs.mkdirSync(dir);
+        fs.writeFileSync(`${dir}/.gitignore`, ignore);
         return;
       }
-
-      // const cmd = `cd ${dir} && git init && git add . && git commit -m "first commit"`
-      githubAuth.auth(configstore.get().token);
 
       const githubData = {
         name: app_name,
@@ -180,19 +193,36 @@ class GitPod {
       };
 
       try {
-        const response = await github.repos.createForAuthenticatedUser(
+        const response = await githubAuth.repos.createForAuthenticatedUser(
           githubData
         );
-        return chalk.green(this.log(response.data.ssh_url));
+
+        const remoteUrl = response.data.ssh_url;
+        // 'git@github.com:Benrobo/demoTest.git'
+
+        const cmd = `
+          cd ${dir} npm init -y && git init && git add . && git commit -m "first commit" && git branch -M main && git remote add origin ${remoteUrl} && git push -u origin main
+        `;
+
+        // execute the command above
+
+        exec(cmd, (err) => {
+          if (err) {
+            return error(
+              this.log("Something went wrong, could not create or push to remo")
+            );
+          }
+          this.log("");
+          return success(
+            this.log("gitpod successfully created new working environment..")
+          );
+        });
       } catch (e) {
-        return chalk.red(
-          this.log("Something went wrong creating remote repo")
-        );
+        error(console.log(e));
+        return error(this.log("Something went wrong creating remote repo"));
       }
     } catch (e) {
-      chalk.red(
-        console.log(e)
-      );
+      error(console.log(e));
       return this.log("something went wrong, creating repo folder");
     }
   }
