@@ -1,6 +1,8 @@
 ## gitpod :- /git-p^ud/
 #### A cli application meant for automating project creation work flow
 
+<img src="https://raw.githubusercontent.com/Benrobo/gitpod/main/gitpod.png">
+
 gitpod allows users to 
 
 1. create a new working project directory.
