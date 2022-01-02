@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./gitpod.js"
@@ -11,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@octokit/rest": "^18.12.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.1",
     "chalk": "^5.0.0",
@@ -21,6 +23,6 @@
     "uuid": "^8.3.2"
   },
   "bin": {
-    "gitpod": "./gitpod.js"
+    "gitpod": "./app.js"
   }
 }
