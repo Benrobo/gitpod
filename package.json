@@ -8,7 +8,11 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./gitpod.js"
   },
-  "keywords": [],
+  "keywords": [
+    "cli",
+    "github-automation",
+    "automation"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {

@@ -1,8 +1,6 @@
 require("dotenv").config();
 const inquirer = require("inquirer");
-const { v4: uuid } = require("uuid");
 const chalk = require("chalk");
-const bcrypt = require("bcryptjs");
 const figlet = require("figlet");
 const fs = require("fs");
 const path = require("path");
@@ -19,27 +17,8 @@ const error = chalk.red;
 const success = chalk.green;
 
 class GitPod {
-  genid() {
-    return uuid().replace("-", "").slice(0, 10);
-  }
-
   log(msg) {
     return console.log(msg);
-  }
-
-  genHash(str) {
-    if (!hash || hash === "" || hash === undefined) {
-      return "Hashing string is required";
-    }
-
-    return bcrypt.hashSync(str, 10);
-  }
-
-  compareHash(str, hash) {
-    if (!str || str === "" || str === undefined) return false;
-    if (!hash || hash === "" || hash === undefined) return false;
-
-    return bcrypt.compareSync(str, hash);
   }
 
   createFile(filename) {
