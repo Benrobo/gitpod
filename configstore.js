@@ -3,7 +3,6 @@ const path = require("path");
 const os = require("os");
 const chalk = require("chalk");
 
-
 /** Tip: on macOS, you’ll find the file in 
  * mac
     /Users/[YOUR-USERNME]/.config/configstore/ginit.json. 
@@ -12,7 +11,6 @@ const chalk = require("chalk");
     win
     C:\Users\[username] 
 **/
-
 
 // chalk utilities
 const error = chalk.bold.red;
@@ -55,9 +53,9 @@ module.exports = class ConfigStore {
       return res;
     }
 
-    console.log(error(
-        "Error occured getting config content, pls restart and try again"
-      ));
+    console.log(
+      error("Error occured getting config content, pls restart and try again")
+    );
   }
 
   set(gtoken) {
@@ -65,18 +63,20 @@ module.exports = class ConfigStore {
       console.log(error("expected valid parameters (token) but got none"));
     }
 
-    let { token } = this.get();
+    // let { token } = this.get();
 
-    if (token === gtoken) {
-      let newData = {
-        token: gtoken,
-      };
+    let newData = {
+      token: gtoken,
+    };
 
-      fs.writeFileSync(gitpodFileJson, JSON.stringify(newData));
+    fs.writeFileSync(gitpodFileJson, JSON.stringify(newData));
+  }
 
-      return console.log(error("config updated"))
-    }
+  clear() {
+    const gitpodjson = {
+      token: "",
+    };
 
-    error("package name is invalid");
+    fs.writeFileSync(gitpodFileJson, JSON.stringify(gitpodjson));
   }
 };

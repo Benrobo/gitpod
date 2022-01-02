@@ -15,8 +15,8 @@ const { Octokit } = require("@octokit/rest");
 const pdir = path.join(__dirname);
 
 // chalk utilities
-const error = chalk.bold.red;
-const success = chalk.bold.green;
+const error = chalk.red;
+const success = chalk.green;
 
 class GitPod {
   genid() {
@@ -152,19 +152,19 @@ class GitPod {
 
   // init
   async initGitpod() {
-    const { app_name, visibility, description } = await this.initQuestions();
+    let errorCount = 0;
 
-    // check if token is present in users home directory
-    //  if it is, just give the user from there else
-    // ask for PAT
+    const { app_name, visibility, description } = await this.initQuestions();
 
     // Create a Configstore instance.
     const configstore = new ConfigStore(app_name);
 
-    const PAT = await this.askToken();
+    // const PAT = await this.askToken();
     const configToken = configstore.get();
     const checkPAT =
-      configToken.token === "" || !configToken.token ? PAT : configToken;
+      configToken.token === "" || !configToken.token
+        ? await this.askToken()
+        : configToken;
 
     // init octokit/rest auth
     const githubAuth = new Octokit({
@@ -174,40 +174,39 @@ class GitPod {
     // store token in gitpod.json file in os home directory
     configstore.set(checkPAT.token);
 
-    console.log(checkPAT.token);
-
     const dir = path.join(__dirname, app_name);
 
     try {
-      if (fs.existsSync(dir) === false) {
-        const ignore = `/node_modules` + "\n";
-        fs.mkdirSync(dir);
-        fs.writeFileSync(`${dir}/.gitignore`, ignore);
-        return;
-      }
-
       const githubData = {
         name: app_name,
         description,
-        private: visibility,
+        private: visibility === "public" ? false : true,
       };
 
-      try {
-        const response = await githubAuth.repos.createForAuthenticatedUser(
-          githubData
-        );
+      const response = await githubAuth.repos.createForAuthenticatedUser(
+        githubData
+      );
 
-        const remoteUrl = response.data.ssh_url;
-        // 'git@github.com:Benrobo/demoTest.git'
+      const remoteUrl = response.data.clone_url;
+
+      if (response.status === 201 || response.status === 200) {
+        if (fs.existsSync(dir) === false) {
+          const ignore = `/node_modules` + "\n";
+          const readme = "### Readme generated using gitpod"
+          fs.mkdirSync(dir);
+          fs.writeFileSync(`${dir}/.gitignore`, ignore);
+          fs.writeFileSync(`${dir}/readme.md`, readme);
+        }
 
         const cmd = `
-          cd ${dir} npm init -y && git init && git add . && git commit -m "first commit" && git branch -M main && git remote add origin ${remoteUrl} && git push -u origin main
-        `;
+            cd ${dir} && npm init -y && git init && git add . && git commit -m "first commit" && git branch -M main && git remote add origin ${remoteUrl} && git push -u origin main
+          `;
 
         // execute the command above
 
-        exec(cmd, (err) => {
+        return exec(cmd, (err) => {
           if (err) {
+            this.log(err)
             return error(
               this.log("Something went wrong, could not create or push to remo")
             );
@@ -217,13 +216,25 @@ class GitPod {
             this.log("gitpod successfully created new working environment..")
           );
         });
-      } catch (e) {
-        error(console.log(e));
-        return error(this.log("Something went wrong creating remote repo"));
       }
+
+      return this.log(
+        error(
+          "failed to create remote repo. eitheir token is invalid or you're not connected to internet."
+        )
+      );
     } catch (e) {
-      error(console.log(e));
-      return this.log("something went wrong, creating repo folder");
+      errorCount += 1;
+      if (errorCount > 1) {
+        // this would clear the default user token from pc and then ask the user for a new one
+        configstore.clear();
+      }
+      return this.log(
+        error(
+          "Something went wrong creating remote repo",
+          e.response.data.errors[0].message
+        )
+      );
     }
   }
 }
