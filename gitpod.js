@@ -7,7 +7,7 @@ const figlet = require("figlet");
 const fs = require("fs");
 const path = require("path");
 const { exec } = require("child_process");
-const ConfigStore = require("./configstore");
+const ConfigStore = require("./util/configstore");
 
 const { Octokit } = require("@octokit/rest");
 
@@ -192,7 +192,7 @@ class GitPod {
       if (response.status === 201 || response.status === 200) {
         if (fs.existsSync(dir) === false) {
           const ignore = `/node_modules` + "\n";
-          const readme = "### Readme generated using gitpod"
+          const readme = "### Readme generated using gitpod";
           fs.mkdirSync(dir);
           fs.writeFileSync(`${dir}/.gitignore`, ignore);
           fs.writeFileSync(`${dir}/readme.md`, readme);
@@ -203,10 +203,12 @@ class GitPod {
           `;
 
         // execute the command above
+        this.log("");
+        this.log(success("creating repo..."));
 
         return exec(cmd, (err) => {
           if (err) {
-            this.log(err)
+            this.log(err);
             return error(
               this.log("Something went wrong, could not create or push to remo")
             );

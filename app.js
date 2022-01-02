@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 
-const chalk = require("chalk")
+const chalk = require("chalk");
 const { Command } = require("commander");
 
-const program = new Command()
+const program = new Command();
 
 const v = "0.0.1";
 
 program.version(v);
 
 // log
-const log = console.log
+const log = console.log;
 
 const gitpod = require("./gitpod");
 
@@ -20,21 +20,18 @@ program
   .option("-v, --version", "extra information for gitpod")
   .option("-l, --login", "log in into gitpod using github acct")
   .option("-i, --init", "initialize gitpod")
-  .parse(process.argv)
-
+  .parse(process.argv);
 
 const opt = program.opts();
 
-
 if (opt.v || opt.version) {
-    log("")
-    return log("version number")
+  log("");
+  return log("version number");
 } else if (opt.i || opt.init) {
-  async function run(){
+  async function run() {
     return await gitpod.initGitpod();
   }
-  run()
-}
-else{
-    chalk.red("command is invalid")
+  run();
+} else {
+  chalk.red("command is invalid");
 }
