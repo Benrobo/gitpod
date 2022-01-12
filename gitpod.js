@@ -1,12 +1,12 @@
-const inquirer = require("inquirer");
-const chalk = require("chalk");
-const figlet = require("figlet");
-const fs = require("fs");
-const path = require("path");
-const { exec } = require("child_process");
-const ConfigStore = require("./util/configstore");
+import inquirer from "inquirer";
+import chalk from "chalk";
+import figlet from "figlet";
+import fs from "fs";
+import path from "path";
+import { exec } from "child_process";
+import ConfigStore from "./util/configstore.js";
 
-const { Octokit } = require("@octokit/rest");
+import { Octokit } from "@octokit/rest";
 
 // directory
 const home = process.cwd();
@@ -15,7 +15,7 @@ const home = process.cwd();
 const error = chalk.red;
 const success = chalk.green;
 
-class GitPod {
+export class GitPod {
   log(msg) {
     return console.log(msg);
   }
@@ -215,4 +215,4 @@ class GitPod {
   }
 }
 
-module.exports = new GitPod();
+// module.exports = new GitPod();

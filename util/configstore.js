@@ -1,7 +1,7 @@
-const fs = require("fs");
-const path = require("path");
-const os = require("os");
-const chalk = require("chalk");
+import fs from "fs";
+import path from "path";
+import os from "os";
+import chalk from "chalk";
 
 /** Tip: on macOS, you’ll find the file in 
  * mac
@@ -21,7 +21,7 @@ const home = os.userInfo().homedir;
 const dir = path.join(home, "/gitpod");
 const gitpodFileJson = `${dir}/gitpod.json`;
 
-module.exports = class ConfigStore {
+export default class ConfigStore {
   constructor(pkgname) {
     this.package_name = pkgname;
     // check if folder exisi
@@ -70,4 +70,4 @@ module.exports = class ConfigStore {
 
     fs.writeFileSync(gitpodFileJson, JSON.stringify(gitpodjson));
   }
-};
+}

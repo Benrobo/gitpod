@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
-const chalk = require("chalk");
-const { Command } = require("commander");
+import chalk from "chalk";
+import { GitPod } from "./gitpod.js";
+import { Command } from "commander";
 
 const program = new Command();
 
@@ -12,7 +13,7 @@ program.version(v);
 // log
 const log = console.log;
 
-const gitpod = require("./gitpod");
+const gitpod = new GitPod();
 
 log(gitpod.ANCII("gitpod"));
 
