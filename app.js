@@ -26,7 +26,7 @@ const opt = program.opts();
 
 if (opt.v || opt.version) {
   log("");
-  return log("version number");
+  log("version number");
 } else if (opt.i || opt.init) {
   async function run() {
     return await gitpod.initGitpod();
@@ -36,9 +36,9 @@ if (opt.v || opt.version) {
   log("");
   log(chalk.red("command is invalid"));
   log("");
-  program.options.forEach(option => {
-    log(option.flags) 
-    log(option.description)
-    log("")
+  program.options.forEach((option) => {
+    log(option.flags);
+    log(option.description);
+    log("");
   });
 }
