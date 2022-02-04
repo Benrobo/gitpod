@@ -21,9 +21,10 @@
     "body-parser": "^1.19.1",
     "chalk": "^5.0.0",
     "commander": "^8.3.0",
+    "figlet": "^1.5.2",
     "inquirer": "^8.2.0"
   },
   "bin": {
-    "gitpod": "./app.js"
+    "gitpod": "node ./app.js"
   }
 }

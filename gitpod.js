@@ -215,4 +215,3 @@ export class GitPod {
   }
 }
 
-// module.exports = new GitPod();
